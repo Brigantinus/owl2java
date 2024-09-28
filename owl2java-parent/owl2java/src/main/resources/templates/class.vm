@@ -1,0 +1,274 @@
+#set($cName = $cls.getJavaClassName())
+#set($cFName = $cls.getJavaClassFullName())
+#set($cUri = $cls.getMapUri())
+#set($iName = $cls.getJavaInterfaceName())
+#set($iFName = $cls.getJavaInterfaceFullName())
+##
+package $cls.getJavaPackageName();
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Iterator;
+import java.util.function.Predicate;
+import java.util.function.Function;
+
+import nl.tudelft.tbm.eeni.owl2java.model.jenautils.NullFilter;
+import nl.tudelft.tbm.eeni.owl2java.model.xsd.Map1;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.jena.enhanced.BuiltinPersonalities;
+import org.apache.jena.enhanced.EnhGraph;
+import org.apache.jena.enhanced.EnhNode;
+import org.apache.jena.enhanced.Implementation;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.ontology.Individual;
+import org.apache.jena.ontology.OntClass;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.Profile;
+import org.apache.jena.ontology.impl.IndividualImpl;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.Literal;
+import org.apache.jena.util.iterator.WrappedIterator;
+import org.apache.jena.util.iterator.ExtendedIterator;
+
+
+// import interface
+import $iFName;
+
+/**
+ * Class $cls.getMapUri()
+ */
+public class $cName extends IndividualImpl implements $iName {
+
+	private static Log log = LogFactory.getLog(${cName}.class);
+
+	/**
+	 * Implementation factory for $cName
+	 */
+	static final public Implementation factory = new Implementation() {
+
+		/**
+		 * Convert a Node into an instance of the class
+		 */
+		public EnhNode wrap(Node n, EnhGraph eg) {
+			if (canWrap(n, eg)) {
+				return new $cName(n, eg);
+			} else {
+				log.warn("Cannot convert node " + n.toString() + " to  $cName");
+				return null;
+			}
+		}
+
+		/**
+		 * Return true iff the node can be converted to an instance of
+		 * this class ($cName)
+		 */
+		public boolean canWrap(Node n, EnhGraph eg) {
+			Profile profile;
+			if (eg instanceof OntModel)
+				profile = ((OntModel)eg).getProfile();
+			else
+				return false;
+
+			if (!profile.isSupported(n, eg, Individual.class)) {
+				return false;
+			}
+
+			Graph graph = eg.asGraph();
+			return graph.contains(n, org.apache.jena.vocabulary.RDF.type.asNode(), ${pkgBase}.${pkgTools}.${vocabName}.${cName}.asNode())
+				#foreach($subClass in $cls.listAllSubClasses())
+					|| graph.contains(n, org.apache.jena.vocabulary.RDF.type.asNode(), ${pkgBase}.${pkgTools}.${vocabName}.${subClass.getJavaClassName()}.asNode())
+				#end
+			;
+		}
+	};
+
+	/**
+	 * Filtering support for $cName
+	 */
+	static final public Predicate<$cName> nullFilter = new NullFilter<$cName>();
+
+	/**
+	 * Mapping support for $cName
+	 */
+	public static <From> Function<From, $cName> mapperFrom(Class<From> from) {
+		return new Function<From, $cName>() {
+			@Override
+			public $cName apply(Object x) {
+			if (x instanceof Statement) {
+				Resource r = ((Statement)x).getResource();
+				if (r.canAs(${cName}.class))
+					return r.as(${cName}.class);
+				} else if (x instanceof RDFNode) {
+					if (((RDFNode)x).canAs(${cName}.class))
+						return ((RDFNode)x).as(${cName}.class);
+			}
+			return null;
+		}
+		};
+	}
+
+	// Instantiate some mappers for general use
+	static final public Function<Statement, $cName> statementMapper = mapperFrom(Statement.class);
+	static final public Function<Individual, $cName> individualMapper = mapperFrom(Individual.class);
+	static final public Function<RDFNode, $cName> nodeMapper = mapperFrom(RDFNode.class);
+
+	/**
+	 * Generic functions from parent class
+	 */
+	public $cName(Node n, EnhGraph g) {
+		super(n, g);
+	}
+
+	/**
+	 * Registers all custom classes with jena
+	 */
+	public static void register() {
+		log.debug("Registering custom class $cName with jena");
+		BuiltinPersonalities.model.add(${cName}.class, ${cName}.factory);
+		BuiltinPersonalities.model.add(${cFName}.class, ${cName}.factory);
+	 }
+
+	/**
+	 * Static Functions for instance handling
+	 */
+	public static $cName get(String uri, OntModel ontModel) {
+		Individual individual = ontModel.getIndividual(uri);
+		return ($cFName) individual.as(${cFName}.class);
+	}
+
+	public static $cName get(String uri) {
+		return get(uri, ${pkgBase}.${pkgTools}.${factoryName}.getDefaultModel());
+	}
+
+	public static Iterator<$cName> iterate(OntModel ontModel) {
+		ExtendedIterator<Individual> it = ontModel.listIndividuals(${pkgBase}.${pkgTools}.${vocabName}.${cName});
+		return it.mapWith(individualMapper).filterDrop(nullFilter);
+	}
+
+	public static Iterator<$cName> iterate() {
+		return iterate(${pkgBase}.${pkgTools}.${factoryName}.getDefaultModel());
+	}
+
+	public static List<$cName> list(OntModel ontModel) {
+		List<$cName> list = new ArrayList<$cName>();
+		Iterator <$cName> it = iterate(ontModel);
+		while (it.hasNext()) {
+			$cName cls = it.next();
+			list.add(cls);
+		}
+		return list;
+	}
+
+	public static List<$cName> list() {
+		return list(${pkgBase}.${pkgTools}.${factoryName}.getDefaultModel());
+	}
+
+	public static Iterator<$cName> iterate(boolean direct, OntModel ontModel) {
+		OntClass cls = ontModel.getOntClass("$cUri");
+		ExtendedIterator<? extends RDFNode> it = cls.listInstances(direct);
+		ExtendedIterator<RDFNode> nodeIt = new WrappedIterator<RDFNode>(it) {};
+		return nodeIt.mapWith(nodeMapper).filterDrop(nullFilter);
+	}
+
+	public static Iterator<$cName> iterate(boolean direct) {
+		return iterate(direct, ${pkgBase}.${pkgTools}.${factoryName}.getDefaultModel());
+	}
+
+	public static List<$cName> list(boolean direct, OntModel ontModel) {
+		List<$cName> list = new ArrayList<$cName>();
+		Iterator <$cName> it = iterate(direct, ontModel);
+		while (it.hasNext()) {
+			$cName cls = it.next();
+			list.add(cls);
+		}
+		return list;
+	}
+
+	public static List<$cName> list(boolean direct) {
+		return list(direct, ${pkgBase}.${pkgTools}.${factoryName}.getDefaultModel());
+	}
+
+	public static int count(OntModel ontModel) {
+		int count = 0;
+		Iterator<$cName> it = iterate(ontModel);
+		while (it.hasNext()) {
+			it.next();
+			count++;
+		}
+		return count;
+	}
+
+	public static int count() {
+		return count(${pkgBase}.${pkgTools}.${factoryName}.getDefaultModel());
+	}
+
+	public static int count(boolean direct, OntModel ontModel) {
+		int count = 0;
+		Iterator<$cName> it = iterate(direct, ontModel);
+		while (it.hasNext()) {
+			it.next();
+			count++;
+		}
+		return count;
+	}
+
+	public static int count(boolean direct) {
+		return count(direct, ${pkgBase}.${pkgTools}.${factoryName}.getDefaultModel());
+	}
+
+	public static boolean exists(String uri, OntModel ontModel) {
+		Individual individual = ontModel.getIndividual(uri);
+		if (individual != null)
+			return true;
+		return false;
+	}
+
+	public static boolean exists(String uri) {
+		return exists(uri, ${pkgBase}.${pkgTools}.${factoryName}.getDefaultModel());
+	}
+
+	public static $cName create(String uri, OntModel ontModel) {
+		return ($cName) ontModel.createOntResource(${cName}.class, ${pkgBase}.${pkgTools}.${vocabName}.${cName}, uri);
+	}
+
+	public static $cName create(OntModel ontModel) {
+		return create(null, ontModel);
+	}
+
+	public static $cName create(String uri) {
+		return create(uri, ${pkgBase}.${pkgTools}.${factoryName}.getDefaultModel());
+	}
+
+	public static $cName create() {
+		return create(null, ${pkgBase}.${pkgTools}.${factoryName}.getDefaultModel());
+	}
+
+	public static void delete(String uri, OntModel ontModel) {
+		${pkgBase}.${pkgTools}.${factoryName}.deleteInstance(uri, ontModel);
+	}
+
+	public static void delete(String uri) {
+		${pkgBase}.${pkgTools}.${factoryName}.deleteInstance(uri);
+	}
+
+
+## add the domain property methods
+#foreach($prop in $cls.listAggregatedProperties())
+	#set($propnameCaps = $prop.getJavaNameCaps())  ## the java name with first letter capitalized
+	#set($propname = $prop.getJavaName())             ## the java name
+	#parse("/templates/clsPropBase.vm")
+	#if($prop.isObjectProperty())
+		#parse("/templates/clsPropObj.vm")
+	#else
+		#set($rangeMethod = $prop.getDataRangeMethod()) ## the name of the method to acess a dataproperty range
+		#set($rangeURI = $prop.getRangeUri())      ## the uri of the range. Used for datatype properties
+		#parse("/templates/clsPropDT.vm")
+	#end
+#end
+}
