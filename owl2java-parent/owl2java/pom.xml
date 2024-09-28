@@ -16,7 +16,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.github.piscisaureus.owl2java</groupId>
+            <groupId>com.github.piscisaureus.fork.owl2java</groupId>
             <artifactId>owlstructure</artifactId>
         </dependency>
 
