@@ -1,13 +1,13 @@
 package nl.tudelft.tbm.eeni.owl2java.utils;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class SimpleUrl implements Serializable, Comparable<SimpleUrl> {
 	
-	/**
-	 * 
-	 */
+	@Serial
 	private static final long serialVersionUID = 1L;
+
 	private String url;
 	
 	public SimpleUrl() {

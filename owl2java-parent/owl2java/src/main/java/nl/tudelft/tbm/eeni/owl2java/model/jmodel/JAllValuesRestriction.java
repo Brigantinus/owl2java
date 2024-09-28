@@ -9,7 +9,7 @@ import org.apache.commons.logging.LogFactory;
 
 public class JAllValuesRestriction extends JBaseRestriction implements IReporting {
 
-	private static Log log = LogFactory.getLog(JAllValuesRestriction.class);
+	private static final Log log = LogFactory.getLog(JAllValuesRestriction.class);
 
 	protected JClass allValues = null;
 	// AllValues restrictions of parent classes are deprecated in PropertyRepresentation aggregation step
@@ -18,18 +18,15 @@ public class JAllValuesRestriction extends JBaseRestriction implements IReportin
 	}
 
 	public boolean equals(Object other) {
-		if (!(other instanceof JAllValuesRestriction))
+		if (!(other instanceof JAllValuesRestriction ar))
 			return false;
-		JAllValuesRestriction ar = (JAllValuesRestriction) other;
-		if (!(isEmpty == ar.isEmpty))
+        if (!(isEmpty == ar.isEmpty))
 			return false;
-		if (!(allValues.equals(ar.allValues)))
-			return false;
-		return true;
-	}
+        return allValues.equals(ar.allValues);
+    }
 
 	public JAllValuesRestriction clone() {
-		JAllValuesRestriction r = new JAllValuesRestriction(onClass, onProperty);
+        JAllValuesRestriction r = new JAllValuesRestriction(onClass, onProperty);
 		r.isEmpty = isEmpty;
 		r.allValues = allValues;
 		return r;

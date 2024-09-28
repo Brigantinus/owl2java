@@ -2,13 +2,14 @@ package nl.tudelft.tbm.eeni.owl2java.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class JavaUtils {
 	
-	private static Log log = LogFactory.getLog(JavaUtils.class);
+	private static final Log log = LogFactory.getLog(JavaUtils.class);
 
 	static final public String[] java_keywords = {"abstract", "double", "int", "strictfp", "boolean", "else", "interface",
 			"super", "break", "extends", "long", "switch", "byte", "final", "native", "synchronized", "case",
@@ -16,12 +17,10 @@ public class JavaUtils {
 			"class", "goto", "protected", "transient", "const", "if", "public", "try", "continue", "implements",
 			"return", "void", "default", "import", "short", "volatile", "do", "instanceof", "static", "while"};
 
-	static public java.util.Set<String> reservedWords = new java.util.HashSet<String>();
+	static public java.util.Set<String> reservedWords = new java.util.HashSet<>();
 
 	static {
-		for (int i = 0; i < java_keywords.length; i++) {
-			reservedWords.add(java_keywords[i]);
-		}
+        Collections.addAll(reservedWords, java_keywords);
 	}
 
 	public static String toDirectoryFromPackage(String packageName) {
@@ -57,7 +56,7 @@ public class JavaUtils {
 		try {
 			path = (new File (".")).getCanonicalPath();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error("Error creating path", e);
 		}
 		return path;
 	}

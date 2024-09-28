@@ -8,7 +8,7 @@ public class NamespaceUtils {
 	public static Map<String, String> defaultNs2UriMapping;
 
 	static {
-		defaultNs2UriMapping = new HashMap<String, String>();
+		defaultNs2UriMapping = new HashMap<>();
 		defaultNs2UriMapping.put("http://www.w3.org/2001/XMLSchema#", "xsd");
 		defaultNs2UriMapping.put("http://www.w3.org/2002/07/owl#", "owl");
 		defaultNs2UriMapping.put("http://www.w3.org/1999/02/22-rdf-syntax-ns#", "rdf");

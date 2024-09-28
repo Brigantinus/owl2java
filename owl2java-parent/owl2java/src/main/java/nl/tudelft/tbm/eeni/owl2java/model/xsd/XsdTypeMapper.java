@@ -6,7 +6,7 @@ import org.apache.commons.logging.LogFactory;
 public class XsdTypeMapper {
 
 	@SuppressWarnings("unused")
-	private static Log log = LogFactory.getLog(XsdTypeMapper.class);
+	private static final Log log = LogFactory.getLog(XsdTypeMapper.class);
 
 
 	public static String getJavaClassName(String xsdUri) {

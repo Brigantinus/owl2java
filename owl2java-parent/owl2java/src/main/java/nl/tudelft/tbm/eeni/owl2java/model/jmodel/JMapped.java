@@ -10,11 +10,11 @@ import org.apache.commons.logging.LogFactory;
 
 public class JMapped implements IReporting, IName {
 
-	private static Log log = LogFactory.getLog(JMapped.class);
+	private static final Log log = LogFactory.getLog(JMapped.class);
 
-	private String name;
+	private final String name;
 	private String comment;
-	private String mapUri;
+	private final String mapUri;
 
 	public JMapped(String name, String mappedTo) {
 		assert mappedTo != null;

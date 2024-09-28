@@ -10,7 +10,7 @@ import org.apache.commons.logging.LogFactory;
 public class JBaseRestriction implements IReporting {
 
 	@SuppressWarnings("unused")
-	private static Log log = LogFactory.getLog(JBaseRestriction.class);
+	private static final Log log = LogFactory.getLog(JBaseRestriction.class);
 
 	JModel jModel;
 	JClass onClass;

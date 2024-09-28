@@ -8,20 +8,17 @@ import org.apache.jena.ontology.Restriction;
 
 public class RestrictionUtils {
 
-	@SuppressWarnings("unchecked")
 	public static boolean hasRestrictionOnProperty(OntClass cls, OntProperty property) {
-		Iterator restrictionIt = property.listReferringRestrictions();
+		Iterator<Restriction> restrictionIt = property.listReferringRestrictions();
 		while (restrictionIt.hasNext()) {
-			Restriction restriction = (Restriction) restrictionIt.next();
-			Iterator subClassIt = restriction.listSubClasses();
+			Restriction restriction = restrictionIt.next();
+			Iterator<OntClass> subClassIt = restriction.listSubClasses();
 			while (subClassIt.hasNext()) {
-				OntClass ontClass = (OntClass) subClassIt.next();
+				OntClass ontClass = subClassIt.next();
 				if (ontClass.equals(cls))
 					return true;
 			}
-
 		}
 		return false;
 	}
-	
 }

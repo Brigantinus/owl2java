@@ -10,7 +10,7 @@ import org.apache.commons.logging.LogFactory;
 public class JCardinalityRestriction extends JBaseRestriction implements IReporting {
 
 	@SuppressWarnings("unused")
-	private static Log log = LogFactory.getLog(JCardinalityRestriction.class);
+	private static final Log log = LogFactory.getLog(JCardinalityRestriction.class);
 
 	private int maxCardinality = -1;
 	private int minCardinality = 0;
@@ -46,10 +46,9 @@ public class JCardinalityRestriction extends JBaseRestriction implements IReport
 	}
 
 	public boolean equalsIgnoreDeprecated(Object other) {
-		if (!(other instanceof JCardinalityRestriction))
+		if (!(other instanceof JCardinalityRestriction cr))
 			return false;
-		JCardinalityRestriction cr = (JCardinalityRestriction) other;
-		if (!(isEmpty == cr.isEmpty))
+        if (!(isEmpty == cr.isEmpty))
 			return false;
 		if (!(maxCardinality == cr.maxCardinality))
 			return false;
@@ -57,18 +56,22 @@ public class JCardinalityRestriction extends JBaseRestriction implements IReport
 			return false;
 		if (!(multipleEnabled == cr.multipleEnabled))
 			return false;
-		if (!(singleEnabled == cr.singleEnabled))
-			return false;
-		return true;
-	}
+        return singleEnabled == cr.singleEnabled;
+    }
+
+	@Override
 	public boolean equals(Object other) {
-		if (!equalsIgnoreDeprecated(other))
+		if (this == other) {
+			return true;
+		}
+		if (!(other instanceof JCardinalityRestriction cr)) {
 			return false;
-		JCardinalityRestriction cr = (JCardinalityRestriction) other;
-		if (!(multipleDeprecated == cr.multipleDeprecated))
-		if (!(singleDeprecated == cr.singleDeprecated))
-			return false;
-		return true;
+		}
+
+        // Combine conditions for readability
+		return equalsIgnoreDeprecated(other)
+				&& multipleDeprecated == cr.multipleDeprecated
+				&& singleDeprecated == cr.singleDeprecated;
 	}
 
 	public void mergeParent(JCardinalityRestriction parent) {
